@@ -45,13 +45,13 @@ def basson():
     return 0
 
 
-def createNote(n, factor, paramFreq, paramMag, paramAngle, env):
+def createNote(n, sampleRate, factor, paramFreq, paramMag, paramAngle, env):
     noteTime = np.zeros(len(env))
 
     for i in range(len(paramMag)):
-        noteTime = noteTime + paramMag[i] * np.sin(2 * np.pi * paramFreq[i] * factor * n + paramAngle[i])
+        noteTime = noteTime + paramMag[i] * np.sin(2 * np.pi * paramFreq[i] * factor * n / sampleRate + paramAngle[i])
 
-    #noteTime = noteTime/max(paramMag)
+    noteTime = noteTime/max(paramMag)
 
     return noteTime*env
 
@@ -114,11 +114,11 @@ def lad():
     n = np.arange(0, N + P - 1, 1)
     # Recréation du lad
     ladFactor = 1
-    ladTime = createNote(n, ladFactor, paramFreq, paramMag, paramAngle, env)
+    ladTime = createNote(n, sampleRate, ladFactor, paramFreq, paramMag, paramAngle, env)
 
     # SOL
     solFactor = 0.841
-    solTime = createNote(n, solFactor, paramFreq, paramMag, paramAngle, env)
+    solTime = createNote(n, sampleRate, solFactor, paramFreq, paramMag, paramAngle, env)
 
     wavfile.write('../LAD.wav', sampleRate, ladTime.astype(np.int16))
     wavfile.write('../SOL.wav', sampleRate, solTime.astype(np.int16))

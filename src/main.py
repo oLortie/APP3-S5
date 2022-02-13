@@ -120,8 +120,34 @@ def lad():
     solFactor = 0.841
     solTime = createNote(n, sampleRate, solFactor, paramFreq, paramMag, paramAngle, env)
 
+    # MI bemol (ou Ré#)
+    mibFactor = 0.667
+    mibTime = createNote(n, sampleRate, mibFactor, paramFreq, paramMag, paramAngle, env)
+
+    # FA
+    faFactor = 0.749
+    faTime = createNote(n, sampleRate, faFactor, paramFreq, paramMag, paramAngle, env)
+
+    # RE
+    reFactor = 0.630
+    reTime = createNote(n, sampleRate, reFactor, paramFreq, paramMag, paramAngle, env)
+
+    # Silence
+    silenceTime = np.zeros(len(reTime))
+
+    # Beethoven ( len = 160885)
+    noteTime = 44100 # 44100 = 1 sec
+    beethovenTime = np.concatenate((solTime[0:noteTime], solTime[0:noteTime], solTime[0:noteTime], mibTime[0:noteTime],
+                                    silenceTime[0:noteTime], faTime[0:noteTime], faTime[0:noteTime], faTime[0:noteTime],
+                                    reTime[0:noteTime]))
+
     wavfile.write('../LAD.wav', sampleRate, ladTime.astype(np.int16))
     wavfile.write('../SOL.wav', sampleRate, solTime.astype(np.int16))
+    wavfile.write('../MIB.wav', sampleRate, mibTime.astype(np.int16))
+    wavfile.write('../FA.wav', sampleRate, faTime.astype(np.int16))
+    wavfile.write('../RE.wav', sampleRate, reTime.astype(np.int16))
+    wavfile.write('../Silence.wav', sampleRate, silenceTime.astype(np.int16))
+    wavfile.write('../Beethoven.wav', sampleRate, beethovenTime.astype(np.int16))
 
     return 0
 

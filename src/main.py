@@ -51,7 +51,7 @@ def basson():
         else:
             stopBandTime.append(-2*((np.sin(np.pi*i*K/N))/(N*np.sin(np.pi*i/N)))*np.cos(2*np.pi*f0/sampleRate*i))
 
-    plotTime(stopBandTime, 'Réponse à l''impulsion du filtre coupe-bande')
+    plotTime(stopBandTime, 'Réponse à l''impulsion du filtre coupe-bande', sampleRate)
 
     plotFreqz(data, "Spectre de Fourier du basson (Original)", sampleRate)
 

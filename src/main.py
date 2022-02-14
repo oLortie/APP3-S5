@@ -31,7 +31,7 @@ def basson():
 
     stopBandTime = []
     w = []
-    for i in range(N):
+    for i in range(int(-(N/2)), int(N/2)):
         w.append(2*np.pi*i/N)
         if i == 0:
             stopBandTime.append(1-2*(K/N))
@@ -39,10 +39,6 @@ def basson():
             stopBandTime.append(-2*((np.sin(np.pi*i*K/N))/(N*np.sin(np.pi*i/N)))*np.cos(2*np.pi*f0/sampleRate*i))
 
     plotFreqz(data, "Gain en fonction de m", sampleRate)
-
-    # plt.figure()
-    # plt.plot(dataFreqMagDB)
-    # plt.title("Gain en fonction de m")
 
     plotFreqz(stopBandTime, "Basson", sampleRate)
 

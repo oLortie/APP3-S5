@@ -14,7 +14,7 @@ def basson():
 
     stopBandTime = []
     w = []
-    for i in range(int(-N/2),int(N/2)):
+    for i in range(N):
         w.append(2*np.pi*i/N)
         if i == 0:
             stopBandTime.append(1-2*(K/N))
@@ -66,7 +66,7 @@ def lad():
     dataFreqMagDB = 20*np.log10(abs(dataFreq))
     dataFreqAngle = np.angle(dataFreq)
 
-    peaks, properties = signal.find_peaks(dataFreqMagDB, distance=1690)
+    peaks, properties = signal.find_peaks(dataFreqMagDB, height=75, distance=1690)
 
     #Amplitudes et phases
     maxPeaks = 32

@@ -57,9 +57,19 @@ def basson():
 
     plotFreqz(stopBandTime, "Spectre de Fourier du Filtre coupe-bande", sampleRate)
 
+    # iii)
+    sinMille = []
+    for i in range(len(data)):
+        sinMille.append(np.sin(2 * np.pi * 1000 * i / sampleRate))
+    sinMilleConv = np.convolve(stopBandTime, sinMille)
+
+    plotTime(sinMilleConv, 'Réponse à une sinusoïde de 1000 Hz', sampleRate)
+
     result = np.convolve(data, stopBandTime)
     for i in range(4):
         result = np.convolve(result, stopBandTime)
+
+    plotFreqz(result, "Spectre de Fourier du basson (Après)", sampleRate)
 
     wavfile.write('../note_basson.wav', sampleRate, result.astype(np.int16))
 
@@ -162,6 +172,6 @@ def lad():
 
 if __name__ == "__main__":
     basson()
-    lad()
+    # lad()
 
     plt.show()

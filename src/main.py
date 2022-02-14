@@ -4,19 +4,21 @@ from scipy.io import wavfile
 import scipy.signal as signal
 
 
-def plotFreqz(data, title, Fe):
+def plotFreqz(data, title, Fe, displayAngle=True):
     w, h = signal.freqz(data)
     fig, ax1 = plt.subplots()
     ax1.set_title(title)
     ax1.plot(w*Fe/(2*np.pi), 20 * np.log10(abs(h)), 'b')
     ax1.set_ylabel('Amplitude [dB]', color='b')
     ax1.set_xlabel('Frequency [Hz]')
-    ax2 = ax1.twinx()
-    angles = np.unwrap(np.angle(h))
-    ax2.plot(w*Fe/(2*np.pi), angles, 'g')
-    ax2.set_ylabel('Angle (radians)', color='g')
-    ax2.grid()
-    ax2.axis('tight')
+
+    if displayAngle:
+        ax2 = ax1.twinx()
+        angles = np.unwrap(np.angle(h))
+        ax2.plot(w*Fe/(2*np.pi), angles, 'g')
+        ax2.set_ylabel('Angle (radians)', color='g')
+        ax2.grid()
+        ax2.axis('tight')
 
     return
 
@@ -49,9 +51,11 @@ def basson():
         else:
             stopBandTime.append(-2*((np.sin(np.pi*i*K/N))/(N*np.sin(np.pi*i/N)))*np.cos(2*np.pi*f0/sampleRate*i))
 
-    plotFreqz(data, "Gain en fonction de m", sampleRate)
+    plotTime(stopBandTime, 'Réponse à l''impulsion du filtre coupe-bande')
 
-    plotFreqz(stopBandTime, "Basson", sampleRate)
+    plotFreqz(data, "Spectre de Fourier du basson (Original)", sampleRate)
+
+    plotFreqz(stopBandTime, "Spectre de Fourier du Filtre coupe-bande", sampleRate)
 
     result = np.convolve(data, stopBandTime)
     for i in range(4):
@@ -78,7 +82,7 @@ def lad():
     sampleRate, dataTime = wavfile.read('../note_guitare_LAd.wav')
     N = len(dataTime)
 
-    plotFreqz(dataTime, 'Spectre de Fourier du LA#', sampleRate)
+    plotFreqz(dataTime, 'Spectre de Fourier du LA# (Original)', sampleRate)
 
     dataFreq = np.fft.fft(dataTime * np.hanning(N))
     dataFreqMag = abs(dataFreq)
@@ -105,7 +109,7 @@ def lad():
 
     lowPassTime = np.full(P, 1/P)
 
-    plotFreqz(lowPassTime, "Spectre de Fourier du filtre passe-bas", sampleRate)
+    plotFreqz(lowPassTime, "Spectre de Fourier du filtre passe-bas", sampleRate, False)
 
     #Extraction de l'enveloppe
     dataTimeAbs = abs(dataTime)
@@ -117,6 +121,8 @@ def lad():
     # Recréation du lad
     ladFactor = 1
     ladTime = createNote(n, sampleRate, ladFactor, paramFreq, paramMag, paramAngle, env)
+
+    plotFreqz(ladTime, 'Spectre de Fourier du LA# (Synthèse)', sampleRate)
 
     # SOL
     solFactor = 0.841

@@ -10,7 +10,7 @@ def plotFreqz(data, title, Fe, displayAngle=True):
     ax1.set_title(title)
     ax1.plot(w*Fe/(2*np.pi), 20 * np.log10(abs(h)), 'b')
     ax1.set_ylabel('Amplitude [dB]', color='b')
-    ax1.set_xlabel('Frequency [Hz]')
+    ax1.set_xlabel('Frequence [Hz]')
 
     if displayAngle:
         ax2 = ax1.twinx()

@@ -4,6 +4,23 @@ from scipy.io import wavfile
 import scipy.signal as signal
 
 
+def plotFreqz(data, title, Fe):
+    w, h = signal.freqz(data)
+    fig, ax1 = plt.subplots()
+    ax1.set_title(title)
+    ax1.plot(w*Fe/(2*np.pi), 20 * np.log10(abs(h)), 'b')
+    ax1.set_ylabel('Amplitude [dB]', color='b')
+    ax1.set_xlabel('Frequency [Hz]')
+    ax2 = ax1.twinx()
+    angles = np.unwrap(np.angle(h))
+    ax2.plot(w*Fe/(2*np.pi), angles, 'g')
+    ax2.set_ylabel('Angle (radians)', color='g')
+    ax2.grid()
+    ax2.axis('tight')
+
+    return
+
+
 def basson():
     sampleRate, data = wavfile.read('../note_basson_plus_sinus_1000_Hz.wav')
 
@@ -21,20 +38,13 @@ def basson():
         else:
             stopBandTime.append(-2*((np.sin(np.pi*i*K/N))/(N*np.sin(np.pi*i/N)))*np.cos(2*np.pi*f0/sampleRate*i))
 
-    # stopBandFreq = np.fft.fft(stopBandTime)
+    plotFreqz(data, "Gain en fonction de m", sampleRate)
 
-    w, h = signal.freqz(stopBandTime)
-    fig, ax1 = plt.subplots()
-    ax1.set_title('Digital filter frequency response')
-    ax1.plot(w, 20 * np.log10(abs(h)), 'b')
-    ax1.set_ylabel('Amplitude [dB]', color='b')
-    ax1.set_xlabel('Frequency [rad/sample]')
-    ax2 = ax1.twinx()
-    angles = np.unwrap(np.angle(h))
-    ax2.plot(w, angles, 'g')
-    ax2.set_ylabel('Angle (radians)', color='g')
-    ax2.grid()
-    ax2.axis('tight')
+    # plt.figure()
+    # plt.plot(dataFreqMagDB)
+    # plt.title("Gain en fonction de m")
+
+    plotFreqz(stopBandTime, "Basson", sampleRate)
 
     result = np.convolve(data, stopBandTime)
     for i in range(4):
@@ -94,18 +104,7 @@ def lad():
 
     lowPassTime = np.full(P, 1/P)
 
-    w, h = signal.freqz(lowPassTime)
-    fig, ax1 = plt.subplots()
-    ax1.set_title('Digital filter frequency response')
-    ax1.plot(w, 20 * np.log10(abs(h)), 'b')
-    ax1.set_ylabel('Amplitude [dB]', color='b')
-    ax1.set_xlabel('Frequency [rad/sample]')
-    ax2 = ax1.twinx()
-    angles = np.unwrap(np.angle(h))
-    ax2.plot(w, angles, 'g')
-    ax2.set_ylabel('Angle (radians)', color='g')
-    ax2.grid()
-    ax2.axis('tight')
+    plotFreqz(lowPassTime, "Digital filter frequency response", sampleRate)
 
     #Extraction de l'enveloppe
     dataTimeAbs = abs(dataTime)
@@ -153,7 +152,7 @@ def lad():
 
 
 if __name__ == "__main__":
-    #basson()
-    lad()
+    basson()
+    # lad()
 
     plt.show()

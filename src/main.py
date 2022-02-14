@@ -21,6 +21,17 @@ def plotFreqz(data, title, Fe):
     return
 
 
+def plotTime(data, title, Fe):
+    n = np.arange(0,len(data), 1)
+    plt.figure()
+    plt.plot(n/Fe, data)
+    plt.title(title)
+    plt.xlabel('Temps (s)')
+    plt.ylabel('Amplitude')
+
+    return 0
+
+
 def basson():
     sampleRate, data = wavfile.read('../note_basson_plus_sinus_1000_Hz.wav')
 
@@ -67,6 +78,8 @@ def lad():
     sampleRate, dataTime = wavfile.read('../note_guitare_LAd.wav')
     N = len(dataTime)
 
+    plotFreqz(dataTime, 'Spectre de Fourier du LA#', sampleRate)
+
     dataFreq = np.fft.fft(dataTime * np.hanning(N))
     dataFreqMag = abs(dataFreq)
     dataFreqMagDB = 20*np.log10(abs(dataFreq))
@@ -87,24 +100,18 @@ def lad():
         paramMag.append(dataFreqMag[m])
         paramAngle.append(dataFreqAngle[m])
 
-    plt.figure()
-    plt.plot(dataFreqMagDB)
-    plt.title("Gain en fonction de m")
-
-    plt.figure()
-    plt.plot(np.angle(dataFreq))
-    plt.title("Phase en fonction de m")
-
     #Conception du filtre
     P = 886  # 886
 
     lowPassTime = np.full(P, 1/P)
 
-    plotFreqz(lowPassTime, "Digital filter frequency response", sampleRate)
+    plotFreqz(lowPassTime, "Spectre de Fourier du filtre passe-bas", sampleRate)
 
     #Extraction de l'enveloppe
     dataTimeAbs = abs(dataTime)
     env = np.convolve(dataTimeAbs, lowPassTime)
+
+    plotTime(env, 'Enveloppe du LA#', sampleRate)
 
     n = np.arange(0, N + P - 1, 1)
     # Recréation du lad
@@ -149,6 +156,6 @@ def lad():
 
 if __name__ == "__main__":
     basson()
-    # lad()
+    lad()
 
     plt.show()

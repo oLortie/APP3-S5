@@ -69,9 +69,12 @@ def basson():
     for i in range(4):
         result = np.convolve(result, stopBandTime)
 
+    result_w = result*np.hanning(len(result))
+
     plotFreqz(result, "Spectre de Fourier du basson (Après)", sampleRate)
 
     wavfile.write('../note_basson.wav', sampleRate, result.astype(np.int16))
+    wavfile.write('../note_basson_window.wav', sampleRate, result_w.astype(np.int16))
 
     return 0
 
@@ -172,6 +175,6 @@ def lad():
 
 if __name__ == "__main__":
     basson()
-    # lad()
+    lad()
 
     plt.show()
